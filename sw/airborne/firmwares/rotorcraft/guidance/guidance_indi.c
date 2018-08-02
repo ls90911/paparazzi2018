@@ -131,6 +131,8 @@ void guidance_indi_run(bool in_flight, float heading_sp) {
   //filter accel to get rid of noise and filter attitude to synchronize with accel
   guidance_indi_propagate_filters();
 
+/*  printf("[guidance_indi] ref x is %f\n",POS_FLOAT_OF_BFP(guidance_h.ref.pos.x));
+  printf("[guidance_indi] ref y is %f\n",POS_FLOAT_OF_BFP(guidance_h.ref.pos.y));*/
   //Linear controller to find the acceleration setpoint from position and velocity
   float pos_x_err = POS_FLOAT_OF_BFP(guidance_h.ref.pos.x) - stateGetPositionNed_f()->x;
   float pos_y_err = POS_FLOAT_OF_BFP(guidance_h.ref.pos.y) - stateGetPositionNed_f()->y;
