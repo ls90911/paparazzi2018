@@ -33,6 +33,7 @@ enum ControllerInUse controllerInUse;
 struct Pos hoverPos;
 struct Euler hoverEuler;
 bool flagNN;
+struct NN_CMD nn_cmd;
 
 bool hover_with_optitrack(float hoverTime)
 {
@@ -82,12 +83,21 @@ void nn_controller(void)
             printf("[nn controle] nn controller is activated]");
     }
 
-    double state[NUM_STATE_VARS] = {
+    /*double state[NUM_STATE_VARS] = {
         -4.2232016635363578e-02, -3.0225037024451664e+00, -6.1490007593689278e-01,
         5.1089365659897990e-01, 2.9941452020833115e-01
+    };*/
+
+    double state[NUM_STATE_VARS] = {stateGetPositionNed_f()->x,
+    stateGetSpeedNed_f()->x,
+    stateGetPositionNed_f()->z,
+    stateGetSpeedNed_f()->z,
+    stateGetNedToBodyEulers_f()->theta
     };
     double control[NUM_CONTROL_VARS];
     nn(state, control);
+    nn_cmd.thrust_ref = control[0] ;
+    nn_cmd.rate_ref = control[1] ;
 }
 
 bool go_to_point(float desired_x,float desired_y,float desired_z,float desired_heading)
