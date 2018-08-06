@@ -231,7 +231,7 @@ static void attitude_run_fb(int32_t fb_commands[], struct Int32AttitudeGains *ga
 static void attitude_run_rate_control(int32_t fb_commands[], int32_t ff_commands[],struct Int32AttitudeGains *gains, struct Int32Quat *att_err,
                             struct Int32Rates *rate_err, struct Int32Quat *sum_err)
 {
-    printf("[stabilization] q only controller is running");
+//    printf("[stabilization] q only controller is running");
     /*
     fb_commands[COMMAND_PITCH] = GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q);
     ff_commands[COMMAND_PITCH] = 0;
@@ -293,7 +293,7 @@ void stabilization_attitude_run(bool enable_integrator)
   /* compute the feed back command */
   attitude_run_fb(stabilization_att_fb_cmd, &stabilization_gains, &att_err, &rate_err, &stabilization_att_sum_err_quat);
 
-  if(flagNN == true)
+  if(flagNN == true && autopilot_get_mode() != AP_MODE_GUIDED)
   {
       int32_t currentQ = stateGetBodyRates_i()->q;
       int32_t q_ref = RATE_BFP_OF_REAL(nn_cmd.rate_ref);

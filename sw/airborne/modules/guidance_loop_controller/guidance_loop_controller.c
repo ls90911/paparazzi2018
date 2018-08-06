@@ -59,12 +59,10 @@ bool hover_with_optitrack(float hoverTime)
 
     if(getTime(2)>hoverTime)
     {
-        printf("return true time 2 is %f\n",getTime(2));
         return true;
     }
     else
     {
-        printf("return false time 2 is %f\n",getTime(2));
         return false;
     }
 
