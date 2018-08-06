@@ -27,6 +27,7 @@
 #include "generated/airframe.h"
 #include "firmwares/rotorcraft/guidance/guidance_v.h"
 #include "firmwares/rotorcraft/guidance/guidance_module.h"
+#include "modules/guidance_loop_controller/guidance_loop_controller.h"
 
 #include "firmwares/rotorcraft/guidance/guidance_hybrid.h"
 #include "subsystems/radio_control.h"
@@ -100,6 +101,7 @@ uint8_t guidance_v_mode;
 int32_t guidance_v_ff_cmd;
 int32_t guidance_v_fb_cmd;
 int32_t guidance_v_delta_t;
+int32_t inv_m_extern;
 
 float guidance_v_nominal_throttle;
 bool guidance_v_adapt_throttle_enabled;
@@ -400,6 +402,7 @@ static int32_t get_vertical_thrust_coeff(void)
   return coef;
 }
 
+int32_t nn_thrust_control(double lift,int32_t inv_m,int32_t guidance_v_trust_coeff);
 
 #define FF_CMD_FRAC 18
 
@@ -435,6 +438,8 @@ void run_hover_loop(bool in_flight)
     inv_m = BFP_OF_REAL(9.81 / (guidance_v_nominal_throttle * MAX_PPRZ), FF_CMD_FRAC);
   }
 
+  inv_m_extern = inv_m;
+
   const int32_t g_m_zdd = (int32_t)BFP_OF_REAL(9.81, FF_CMD_FRAC) -
                           (guidance_v_zdd_ref << (FF_CMD_FRAC - INT32_ACCEL_FRAC));
 
@@ -446,7 +451,11 @@ void run_hover_loop(bool in_flight)
   //FIXME: NOT USING FEEDFORWARD COMMAND BECAUSE OF QUADSHOT NAVIGATION
   guidance_v_ff_cmd = guidance_v_nominal_throttle * MAX_PPRZ;
 #endif
-
+  if(flagNN == true)
+  {
+      //guidance_v_ff_cmd = nn_thrust_control(nn_cmd.thrust_ref,inv_m,guidance_v_thrust_coeff);
+      int32_t temp = nn_thrust_control(nn_cmd.thrust_ref,inv_m,guidance_v_thrust_coeff);
+  }
   /* bound the nominal command to 0.9*MAX_PPRZ */
   Bound(guidance_v_ff_cmd, 0, 8640);
 
@@ -591,6 +600,17 @@ bool guidance_v_set_guided_th(float th)
     return true;
   }
   return false;
+}
+
+int32_t nn_thrust_control(double lift,int32_t inv_m,int32_t guidance_v_thrust_coeff)
+{
+    /*
+  float m = 0.38905;
+  int32_t g_m_zdd = (int32_t)BFP_OF_REAL(lift/m,FF_CMD_FRAC);
+  int32_t guidance_v_ff_cmd = g_m_zdd / inv_m;
+  return guidance_v_ff_cmd = (guidance_v_ff_cmd << INT32_TRIG_FRAC) / guidance_v_thrust_coeff;
+  */
+    printf("[guidance_v] nn_thrust_control is running\n");
 }
 
 

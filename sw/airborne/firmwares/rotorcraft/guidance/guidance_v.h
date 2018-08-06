@@ -147,6 +147,8 @@ extern bool guidance_v_set_guided_vz(float vz);
 
 extern bool guidance_v_set_guided_th(float th);
 
+extern int32_t inv_m_extern;
+
 #define guidance_v_SetKi(_val) {      \
     guidance_v_ki = _val;       \
     guidance_v_z_sum_err = 0;     \
