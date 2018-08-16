@@ -39,6 +39,11 @@
     <!--module name="logger_file">
       <define name="FILE_LOGGER_PATH" value="/data/ftp/internal_000"/>
     </module-->
+    <module name="mavlink">
+       <!--configure name="MAVLINK_PORT" value="UARTx|UDPx|UsbS" /-->
+       <configure name="MAVLINK_PORT" value="UART2" />
+       <configure name="MAVLINK_BAUD" value="B57600" />
+     </module>
   </modules>
 
   <commands>
