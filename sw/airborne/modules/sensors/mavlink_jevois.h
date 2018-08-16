@@ -33,6 +33,7 @@
  * Paparazzi UART over USB
  */
 #include "mcu_periph/uart.h"
+#include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
 
 #ifndef JEVOIS_DEV
 #define JEVOIS_DEV uart2

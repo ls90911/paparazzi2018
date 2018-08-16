@@ -34,6 +34,7 @@
 #include <mavlink/mavlink_types.h>
 #include "mavlink/paparazzi/mavlink.h"
 #include "subsystems/imu.h"
+#include "autopilot.h"
 
 mavlink_system_t mavlink_system;
 
@@ -93,6 +94,23 @@ void mavlink_jevois_event(void)
           int i = imu.xacc;
         }
         break;
+
+	case MAVLINK_MSG_ID_ATTITUDE:
+	{
+		mavlink_attitude_t att;
+		mavlink_msg_attitude_decode(&msg,&att);
+		attitude_cmd.phi = att.roll;
+		attitude_cmd.theta= att.pitch;
+		attitude_cmd.psi = att.yaw;
+	}
+	break;
+
+	case MAVLINK_MSG_ID_ALTITUDE:
+	{
+		mavlink_altitude_t alt;
+		mavlink_msg_attitude_decode(&msg,&alt);
+	}
+	break;
       }
     }
   }

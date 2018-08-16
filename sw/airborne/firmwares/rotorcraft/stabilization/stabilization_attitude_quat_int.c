@@ -28,7 +28,6 @@
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude.h"
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h"
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude_quat_transformations.h"
-#include "modules/guidance_loop_controller/guidance_loop_controller.h"
 
 #include "std.h"
 #include "paparazzi.h"
