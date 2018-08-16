@@ -33,6 +33,7 @@
 
 #include <mavlink/mavlink_types.h>
 #include "mavlink/paparazzi/mavlink.h"
+#include "subsystems/imu.h"
 
 mavlink_system_t mavlink_system;
 
@@ -46,6 +47,7 @@ mavlink_system_t mavlink_system;
 
 static void mavlink_send_heartbeat(void);
 static void mavlink_send_attitude(void);
+static void mavlink_send_highres_imu(void);
 
 
 /*
@@ -63,6 +65,7 @@ void mavlink_jevois_periodic(void)
 {
   RunOnceEvery(100, mavlink_send_heartbeat());
   RunOnceEvery(2, mavlink_send_attitude());
+  RunOnceEvery(1, mavlink_send_highres_imu());
 }
 
 void mavlink_jevois_event(void)
@@ -130,6 +133,27 @@ static void mavlink_send_heartbeat(void)
 }
 
 
+static void mavlink_send_highres_imu(void)
+{
+
+	mavlink_msg_highres_imu_send(MAVLINK_COMM_0,
+			              get_sys_time_msec(),
+				      imu.accel.x/1024.0,
+				      imu.accel.y/1024.0,
+				      imu.accel.y/1024.0,
+				      stateGetBodyRates_f()->p,
+				      stateGetBodyRates_f()->q,
+				      stateGetBodyRates_f()->r,
+				      0,
+				      0,
+				      0,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         0);
+	MAVLinkSendMessage();
+}
 
 
 
