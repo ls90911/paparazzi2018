@@ -1,0 +1,24 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="mavlink_jevois" dir="sensors">
+  <doc>
+    <description>Send sensor data to jevois and read commands from jevois</description>
+  </doc>
+  <header>
+    <file name="mavlink_jevois.h"/>
+  </header>
+  <init fun="mavlink_jevois_init()"/>
+  <periodic fun="mavlink_jevois_periodic()" freq="100"/>
+  <event fun="mavlink_jevois_event()"/>
+  <makefile>
+    <file name="mavlink_jevois.c"/>
+    <configure name="JEVOIS_PORT" default="uart2" case="upper|lower"/>
+    <raw>
+      JEVOIS_BAUD ?= B115200
+      ap.CFLAGS += -DJEVOIS_DEV=$(JEVOIS_PORT_LOWER)
+      ap.CFLAGS += -DUSE_$(JEVOIS_PORT_UPPER)
+      ap.CFLAGS += -D$(JEVOIS_PORT_UPPER)_BAUD=$(JEVOIS_BAUD)
+    </raw>
+  </makefile>
+</module>
+

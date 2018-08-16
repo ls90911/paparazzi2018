@@ -45,6 +45,8 @@
 
     <module name="video_thread"/>
 
+    <module name="mavlink_jevois"/>
+
     <module name="video_rtp_stream">
       <define name="VIEWVIDEO_CAMERA" value="bottom_camera"/>
       <define name="VIEWVIDEO_CAMERA2" value="front_camera"/>
