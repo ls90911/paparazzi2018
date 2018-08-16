@@ -46,9 +46,7 @@ bool hover_with_optitrack(float hoverTime)
             hoverPos.x = stateGetPositionNed_f()->x;
             hoverPos.y= stateGetPositionNed_f()->y;
             hoverPos.z = stateGetPositionNed_f()->z;
-            hoverEuler.psi= stateGetNedToBodyEulers_f()->psi;
-            printf("aa hover is initialized\n");
-            printf("time 2 is %f\n",getTime(2));
+            hoverEuler.psi= 0;//stateGetNedToBodyEulers_f()->psi;
             flagNN = false;
     }
     guidance_h_set_guided_pos(hoverPos.x, hoverPos.y);   
@@ -87,9 +85,9 @@ void nn_controller(void)
     };*/
 
     double state[NUM_STATE_VARS] = {stateGetPositionNed_f()->x,
-    stateGetSpeedNed_f()->x,
+    stateGetSpeedNed_f()->x-(2),
     stateGetPositionNed_f()->z,
-    stateGetSpeedNed_f()->z,
+    stateGetSpeedNed_f()->z-(-2),
     stateGetNedToBodyEulers_f()->theta
     };
     double control[NUM_CONTROL_VARS];

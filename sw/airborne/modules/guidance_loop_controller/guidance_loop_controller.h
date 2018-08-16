@@ -50,6 +50,7 @@ extern bool go_to_point(float desired_x,float desired_y,float desired_z,float de
 extern bool flagNN;
 extern enum ControllerInUse controllerInUse;
 extern struct NN_CMD nn_cmd;
+extern struct Pos hoverPos;
 
 #endif
 

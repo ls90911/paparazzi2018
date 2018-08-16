@@ -231,11 +231,10 @@ static void attitude_run_fb(int32_t fb_commands[], struct Int32AttitudeGains *ga
 static void attitude_run_rate_control(int32_t fb_commands[], int32_t ff_commands[],struct Int32AttitudeGains *gains, struct Int32Quat *att_err,
                             struct Int32Rates *rate_err, struct Int32Quat *sum_err)
 {
-    printf("[stabilization] q only controller is running\n");
-    /*
     fb_commands[COMMAND_PITCH] = GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q);
     ff_commands[COMMAND_PITCH] = 0;
-    */
+    //int32_t nn_pitch = GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q);
+    //printf("[stabilization] nn pitch is %d \n",nn_pitch);
 }
 
 
@@ -293,19 +292,12 @@ void stabilization_attitude_run(bool enable_integrator)
   /* compute the feed back command */
   attitude_run_fb(stabilization_att_fb_cmd, &stabilization_gains, &att_err, &rate_err, &stabilization_att_sum_err_quat);
 
-  if(flagNN == true)
-  {
-      int32_t currentQ = stateGetBodyRates_i()->q;
-      int32_t q_ref = RATE_BFP_OF_REAL(nn_cmd.rate_ref);
-      rate_err.q = q_ref-currentQ;
-      attitude_run_rate_control(stabilization_att_fb_cmd,stabilization_att_ff_cmd,&stabilization_gains,&att_ref_quat_i.accel,&rate_err,&stabilization_att_sum_err_quat);
-  }
-
   /* sum feedforward and feedback */
   stabilization_cmd[COMMAND_ROLL] = stabilization_att_fb_cmd[COMMAND_ROLL] + stabilization_att_ff_cmd[COMMAND_ROLL];
   stabilization_cmd[COMMAND_PITCH] = stabilization_att_fb_cmd[COMMAND_PITCH] + stabilization_att_ff_cmd[COMMAND_PITCH];
   stabilization_cmd[COMMAND_YAW] = stabilization_att_fb_cmd[COMMAND_YAW] + stabilization_att_ff_cmd[COMMAND_YAW];
 
+  //printf("[stabilization] pid pitch = %d\n",stabilization_cmd[COMMAND_PITCH]);
 
 
   /* bound the result */

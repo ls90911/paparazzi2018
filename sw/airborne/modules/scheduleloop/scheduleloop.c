@@ -81,9 +81,16 @@ void firstPartLogic(void)
     switch(lowLevelGuidanceState)
     {
         case TEMP:
+            if(go_to_point(2.0,0,-2,0.0))
+            {
+                lowLevelGuidanceState = HOVER;
+            }
+            break;
+        case HOVER:
             if(hover_with_optitrack(5.0))
             {
                 highLevelGuidanceState = SECOND_HIGH_LEVEL;
+                lowLevelGuidanceState = TEMP;
             }
             break;
     }

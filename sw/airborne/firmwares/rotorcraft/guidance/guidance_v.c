@@ -27,16 +27,14 @@
 #include "generated/airframe.h"
 #include "firmwares/rotorcraft/guidance/guidance_v.h"
 #include "firmwares/rotorcraft/guidance/guidance_module.h"
-#include "modules/guidance_loop_controller/guidance_loop_controller.h"
-
 #include "firmwares/rotorcraft/guidance/guidance_hybrid.h"
 #include "subsystems/radio_control.h"
 #include "firmwares/rotorcraft/stabilization.h"
 #include "firmwares/rotorcraft/navigation.h"
 
-#include "state.h"
+//#include "state.h"
 
-#include "math/pprz_algebra_int.h"
+//#include "math/pprz_algebra_int.h"
 
 
 /* error if some gains are negative */
@@ -451,11 +449,6 @@ void run_hover_loop(bool in_flight)
   //FIXME: NOT USING FEEDFORWARD COMMAND BECAUSE OF QUADSHOT NAVIGATION
   guidance_v_ff_cmd = guidance_v_nominal_throttle * MAX_PPRZ;
 #endif
-  if(flagNN == true)
-  {
-      //guidance_v_ff_cmd = nn_thrust_control(nn_cmd.thrust_ref,inv_m,guidance_v_thrust_coeff);
-      int32_t temp = nn_thrust_control(nn_cmd.thrust_ref,inv_m,guidance_v_thrust_coeff);
-  }
   /* bound the nominal command to 0.9*MAX_PPRZ */
   Bound(guidance_v_ff_cmd, 0, 8640);
 
@@ -467,6 +460,7 @@ void run_hover_loop(bool in_flight)
                       ((-guidance_v_ki * guidance_v_z_sum_err) >> 16);
 
   guidance_v_delta_t = guidance_v_ff_cmd + guidance_v_fb_cmd;
+  //printf("[guidance_v] pid thrust is %d\n",guidance_v_delta_t);
 
   /* bound the result */
   Bound(guidance_v_delta_t, 0, MAX_PPRZ);
@@ -604,13 +598,12 @@ bool guidance_v_set_guided_th(float th)
 
 int32_t nn_thrust_control(double lift,int32_t inv_m,int32_t guidance_v_thrust_coeff)
 {
-    /*
   float m = 0.38905;
+  lift = m * 9.81;
   int32_t g_m_zdd = (int32_t)BFP_OF_REAL(lift/m,FF_CMD_FRAC);
   int32_t guidance_v_ff_cmd = g_m_zdd / inv_m;
+  printf("[guidance_v] nn_thrust_control is %d\n",guidance_v_ff_cmd);
   return guidance_v_ff_cmd = (guidance_v_ff_cmd << INT32_TRIG_FRAC) / guidance_v_thrust_coeff;
-  */
-    printf("[guidance_v] nn_thrust_control is running\n");
 }
 
 
