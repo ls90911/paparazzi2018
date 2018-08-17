@@ -80,8 +80,8 @@ void mavlink_jevois_event(void)
   while (MAVLinkChAvailable()) {
     uint8_t c = MAVLinkGetch();
     if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
+	  printf("msg.msgid is %d\n",msg.msgid);
       switch (msg.msgid) {
-
         case MAVLINK_MSG_ID_HEARTBEAT: {
           mavlink_heartbeat_t heartbeat;
           mavlink_msg_heartbeat_decode(&msg, &heartbeat);
@@ -110,6 +110,10 @@ void mavlink_jevois_event(void)
 		attitude_cmd.phi = att.roll;
 		attitude_cmd.theta= att.pitch;
 		attitude_cmd.psi = att.yaw;
+
+		printf("[mavlink jevois] phi_cmd = %f\n",attitude_cmd.phi/3.14*180);
+		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
+		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
 	}
 	break;
 
@@ -167,18 +171,17 @@ static void mavlink_send_heartbeat(void)
 
 static void mavlink_send_highres_imu(void)
 {
-
 	mavlink_msg_highres_imu_send(MAVLINK_COMM_0,
 			              get_sys_time_msec(),
 				      imu.accel.x/1024.0,
 				      imu.accel.y/1024.0,
-				      imu.accel.y/1024.0,
+				      imu.accel.z/1024.0,
 				      stateGetBodyRates_f()->p,
 				      stateGetBodyRates_f()->q,
 				      stateGetBodyRates_f()->r,
-				      autopilotMode.currentMode,
-				      autopilotMode.previousMode,
-				      0,
+				      stateGetNedToBodyEulers_f()->phi,
+				      stateGetNedToBodyEulers_f()->theta,
+				      stateGetNedToBodyEulers_f()->psi,
                                          0,
                                          0,
                                          0,
