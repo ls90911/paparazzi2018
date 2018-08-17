@@ -35,6 +35,8 @@
 #include "mavlink/paparazzi/mavlink.h"
 #include "subsystems/imu.h"
 #include "autopilot.h"
+#include "firmwares/rotorcraft/guidance/guidance_v.h"
+#include "firmwares/rotorcraft/guidance/guidance_h.h"
 
 mavlink_system_t mavlink_system;
 
@@ -97,6 +99,12 @@ void mavlink_jevois_event(void)
 
 	case MAVLINK_MSG_ID_ATTITUDE:
 	{
+		if(autopilot_get_mode() !=AP_MODE_ATTITUDE_DIRECT &&guidance_h.mode !=GUIDANCE_H_MODE_MODULE)
+		{
+	        	guidance_h_mode_changed(GUIDANCE_H_MODE_MODULE);
+		}
+
+		// read attitude command from Jevois
 		mavlink_attitude_t att;
 		mavlink_msg_attitude_decode(&msg,&att);
 		attitude_cmd.phi = att.roll;
@@ -109,6 +117,12 @@ void mavlink_jevois_event(void)
 	{
 		mavlink_altitude_t alt;
 		mavlink_msg_attitude_decode(&msg,&alt);
+		float altitude = alt.altitude_terrain;
+		if(autopilot_get_mode() !=AP_MODE_ATTITUDE_DIRECT &&guidance_v_mode !=GUIDANCE_V_MODE_GUIDED)
+		{
+	        	guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
+		}
+		guidance_v_set_guided_z(altitude);
 	}
 	break;
       }
@@ -162,8 +176,8 @@ static void mavlink_send_highres_imu(void)
 				      stateGetBodyRates_f()->p,
 				      stateGetBodyRates_f()->q,
 				      stateGetBodyRates_f()->r,
-				      0,
-				      0,
+				      autopilotMode.currentMode,
+				      autopilotMode.previousMode,
 				      0,
                                          0,
                                          0,
