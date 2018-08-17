@@ -77,6 +77,7 @@ PRINT_CONFIG_VAR(GUIDANCE_H_USE_SPEED_REF)
 #define GUIDANCE_INDI FALSE
 #endif
 
+#define GUIDANCE_H_MODE_MODULE_SETTING GUIDANCE_H_MODE_MODULE
 struct HorizontalGuidance guidance_h;
 
 int32_t transition_percentage;
@@ -350,6 +351,12 @@ void guidance_h_read_rc(bool  in_flight)
 
 void guidance_h_run(bool  in_flight)
 {
+
+	if(autopilot_get_mode() == AP_MODE_MODULE)
+	{
+		guidance_h_mode_changed(GUIDANCE_H_MODE_MODULE);
+		guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
+	}
   switch (guidance_h.mode) {
 
     case GUIDANCE_H_MODE_RC_DIRECT:
