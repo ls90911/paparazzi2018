@@ -24,6 +24,7 @@
  */
 
 #include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
+#include "firmwares/fixedwing/autopilot_static.h"
 #include "state.h"
 #include "firmwares/rotorcraft/guidance/guidance_h.h"
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude.h"
@@ -31,10 +32,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "autopilot.h"
+#include "filters/low_pass_filter.h"
 
 struct AutopilotMode autopilotMode;
 struct DESIRED_ATTITUDE_COMMAND attitude_cmd;
 struct Int32Eulers attitude_cmd_i; 
+
+struct SecondOrderLowPass_int axFiltered;
+struct SecondOrderLowPass_int ayFiltered;
+struct SecondOrderLowPass_int azFiltered;
 
 void guidance_h_module_init(void) {
      autopilotMode.previousMode =  autopilot_get_mode();
@@ -56,12 +62,25 @@ void guidance_h_module_read_rc(void)
 void guidance_h_module_run(bool in_flight)    // this function is called in higher level in guidance_h.c
 {
 	//printf("[guidance_loop_velocity] module mode is running\n");
-     autopilotMode.currentMode = autopilot_get_mode();
      attitude_cmd_i.phi = BFP_OF_REAL(attitude_cmd.phi, INT32_ANGLE_FRAC);
      attitude_cmd_i.theta= BFP_OF_REAL(attitude_cmd.theta, INT32_ANGLE_FRAC);
      attitude_cmd_i.psi = BFP_OF_REAL(attitude_cmd.psi, INT32_ANGLE_FRAC);
      int32_quat_of_eulers(&stab_att_sp_quat,&attitude_cmd_i);
      stabilization_attitude_run(in_flight);
-     autopilotMode.previousMode =  autopilotMode.currentMode;
 }
 
+
+void guidance_h_module_get_mode_20HZ()
+{
+	printf("aaaaaaaaaaa %d\n",autopilot_get_mode());
+	if(autopilot_get_mode()== 4)
+	{
+		printf("it is in manually mode\n");
+		autopilotMode.currentMode = 0;
+	}
+	else
+	{
+		autopilotMode.currentMode = 1;
+		printf("it is in auto mode\n");
+	}
+}

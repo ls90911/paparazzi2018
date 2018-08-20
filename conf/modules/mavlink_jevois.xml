@@ -8,7 +8,7 @@
     <file name="mavlink_jevois.h"/>
   </header>
   <init fun="mavlink_jevois_init()"/>
-  <periodic fun="mavlink_jevois_periodic()" freq="100"/>
+  <periodic fun="mavlink_jevois_periodic()" freq="600"/>
   <event fun="mavlink_jevois_event()"/>
   <makefile>
     <file name="mavlink_jevois.c"/>

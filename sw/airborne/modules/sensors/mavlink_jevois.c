@@ -37,6 +37,7 @@
 #include "autopilot.h"
 #include "firmwares/rotorcraft/guidance/guidance_v.h"
 #include "firmwares/rotorcraft/guidance/guidance_h.h"
+#include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
 
 mavlink_system_t mavlink_system;
 
@@ -51,6 +52,7 @@ mavlink_system_t mavlink_system;
 static void mavlink_send_heartbeat(void);
 static void mavlink_send_attitude(void);
 static void mavlink_send_highres_imu(void);
+static void mavlink_send_set_mode(void);
 
 
 /*
@@ -67,8 +69,9 @@ void mavlink_jevois_init(void)
 void mavlink_jevois_periodic(void)
 {
   RunOnceEvery(100, mavlink_send_heartbeat());
-  RunOnceEvery(2, mavlink_send_attitude());
+  //RunOnceEvery(2, mavlink_send_attitude());
   RunOnceEvery(1, mavlink_send_highres_imu());
+  RunOnceEvery(1, mavlink_send_set_mode());
 }
 
 void mavlink_jevois_event(void)
@@ -129,6 +132,15 @@ void mavlink_jevois_event(void)
 		guidance_v_set_guided_z(altitude);
 	}
 	break;
+
+	case MAVLINK_MSG_ID_DEBUG:
+	{
+		mavlink_debug_t debug;
+		mavlink_msg_attitude_decode(&msg,&debug);
+		printf("[mavlink jevois] debug value is %f", debug.value);
+		printf("[mavlink jevois] debug ind is %d", debug.ind);
+	}
+	break;
       }
     }
   }
@@ -156,6 +168,17 @@ static void mavlink_send_attitude(void)
   MAVLinkSendMessage();
 }
 
+
+static void mavlink_send_set_mode(void)
+{
+	printf("currentMode is %d\n",autopilotMode.currentMode);
+	mavlink_msg_set_mode_send(MAVLINK_COMM_0,
+                            get_sys_time_msec(),
+			    autopilotMode.currentMode,
+			   0 
+			);
+  MAVLinkSendMessage();
+}
 
 static void mavlink_send_heartbeat(void)
 {

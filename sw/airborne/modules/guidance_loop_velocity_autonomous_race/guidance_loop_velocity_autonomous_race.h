@@ -50,6 +50,7 @@ extern void guidance_h_module_enter(void);
 
 extern struct AutopilotMode autopilotMode;
 extern struct DESIRED_ATTITUDE_COMMAND attitude_cmd;
+extern void guidance_h_module_get_mode_20HZ(void);
 
 #endif
 
