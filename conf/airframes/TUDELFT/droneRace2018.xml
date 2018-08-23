@@ -10,7 +10,7 @@
       <module name="udp"/>
     </target>
 
-    <!--define name="USE_SONAR" value="TRUE"/-->
+    <define name="USE_SONAR" value="TRUE"/>
 
 	<!-- Subsystem section -->
     <module name="telemetry" type="transparent_udp"/>
@@ -19,12 +19,12 @@
     <module name="actuators" type="bebop"/>
     <module name="imu" type="bebop"/>
     <module name="gps" type="datalink"/>
-    <!--module name="stabilization" type="indi_simple"/>
-    <module name="stabilization" type="rate_indi"/-->
-    <module name="stabilization" type="int_quat"/>
+    <module name="stabilization" type="indi_simple"/>
+    <module name="stabilization" type="rate_indi"/>
+    <!--module name="stabilization" type="int_quat"/-->
     <module name="ahrs" type="int_cmpl_quat">
       <configure name="USE_MAGNETOMETER" value="FALSE"/>
-      <configure name="AHRS_USE_GPS_HEADING" value="TRUE"/>
+      <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/>
     </module>
     <module name="ins" type="extended"/>
     <!--module name="guidance" type="indi">
@@ -41,6 +41,7 @@
       <define name="FILE_LOGGER_PATH" value="/data/ftp/internal_000"/>
     </module-->
     <module name="mavlink_jevois"/>
+    <module name="sonar_bebop"/>
   </modules>
 
   <commands>
@@ -100,7 +101,7 @@
   </section>
 
   <section name="INS" prefix="INS_">
-    <define name="SONAR_MAX_RANGE" value="2.2"/>
+    <define name="SONAR_MAX_RANGE" value="5"/>
     <define name="SONAR_UPDATE_ON_AGL" value="TRUE"/>
   </section>
 
@@ -114,41 +115,7 @@
     <define name="DEADBAND_R" value="250"/>
   </section>
 
-  <section name="ATTITUDE_REFERENCE" prefix="STABILIZATION_ATTITUDE_">
-    <!-- attitude reference generation model -->
-    <define name="REF_OMEGA_P" value="800" unit="deg/s"/>
-    <define name="REF_ZETA_P" value="0.85"/>
-    <define name="REF_MAX_P" value="400." unit="deg/s"/>
-    <define name="REF_MAX_PDOT" value="RadOfDeg(8000.)"/>
-
-    <define name="REF_OMEGA_Q" value="800" unit="deg/s"/>
-    <define name="REF_ZETA_Q" value="0.85"/>
-    <define name="REF_MAX_Q" value="400." unit="deg/s"/>
-    <define name="REF_MAX_QDOT" value="RadOfDeg(8000.)"/>
-
-    <define name="REF_OMEGA_R" value="500" unit="deg/s"/>
-    <define name="REF_ZETA_R" value="0.85"/>
-    <define name="REF_MAX_R" value="400." unit="deg/s"/>
-    <define name="REF_MAX_RDOT" value="RadOfDeg(8000.)"/>
-
-    <define name="PHI_PGAIN"  value="1000"/>
-    <define name="PHI_DGAIN"  value="400"/>
-    <define name="PHI_IGAIN"  value="200"/>
-
-    <define name="THETA_PGAIN"  value="1000"/>
-    <define name="THETA_DGAIN"  value="400"/>
-    <define name="THETA_IGAIN"  value="200"/>
-
-    <define name="PSI_PGAIN"  value="500"/>
-    <define name="PSI_DGAIN"  value="300"/>
-    <define name="PSI_IGAIN"  value="10"/>
-
-    <!-- feedforward -->
-    <define name="PHI_DDGAIN"   value="300"/>
-    <define name="THETA_DDGAIN" value="300"/>
-    <define name="PSI_DDGAIN"   value="300"/>
-  </section>
-
+ 
   <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
    <!-- control effectiveness -->
 
@@ -212,6 +179,7 @@
     <define name="DGAIN" value="100"/>
     <define name="IGAIN" value="30"/>
   </section>
+
 
   <section name="NAVIGATION" prefix="NAV_">
     <define name="CLIMB_VSPEED" value="2.5"/>

@@ -40,6 +40,7 @@ struct DESIRED_ATTITUDE_COMMAND
 	float phi;
 	float theta;
 	float psi;
+	float alt;
 }; 
 
 

@@ -35,8 +35,6 @@
 #include "mavlink/paparazzi/mavlink.h"
 #include "subsystems/imu.h"
 #include "autopilot.h"
-#include "firmwares/rotorcraft/guidance/guidance_v.h"
-#include "firmwares/rotorcraft/guidance/guidance_h.h"
 #include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
 
 mavlink_system_t mavlink_system;
@@ -82,7 +80,7 @@ void mavlink_jevois_event(void)
 
   while (MAVLinkChAvailable()) {
     uint8_t c = MAVLinkGetch();
-    if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
+    if (mavlink_parse_char(MAVLINK_COMM_1, c, &msg, &status)) {
 	  printf("msg.msgid is %d\n",msg.msgid);
       switch (msg.msgid) {
         case MAVLINK_MSG_ID_HEARTBEAT: {
@@ -102,10 +100,6 @@ void mavlink_jevois_event(void)
 
 	case MAVLINK_MSG_ID_ATTITUDE:
 	{
-		if(autopilot_get_mode() !=AP_MODE_ATTITUDE_DIRECT &&guidance_h.mode !=GUIDANCE_H_MODE_MODULE)
-		{
-	        	guidance_h_mode_changed(GUIDANCE_H_MODE_MODULE);
-		}
 
 		// read attitude command from Jevois
 		mavlink_attitude_t att;
@@ -123,13 +117,9 @@ void mavlink_jevois_event(void)
 	case MAVLINK_MSG_ID_ALTITUDE:
 	{
 		mavlink_altitude_t alt;
-		mavlink_msg_attitude_decode(&msg,&alt);
+		mavlink_msg_altitude_decode(&msg,&alt);
 		float altitude = alt.altitude_terrain;
-		if(autopilot_get_mode() !=AP_MODE_ATTITUDE_DIRECT &&guidance_v_mode !=GUIDANCE_V_MODE_GUIDED)
-		{
-	        	guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
-		}
-		guidance_v_set_guided_z(altitude);
+		printf("[mavlink jevois] desired altitude is %f", altitude);
 	}
 	break;
 
@@ -139,6 +129,21 @@ void mavlink_jevois_event(void)
 		mavlink_msg_attitude_decode(&msg,&debug);
 		printf("[mavlink jevois] debug value is %f", debug.value);
 		printf("[mavlink jevois] debug ind is %d", debug.ind);
+	}
+	break;
+
+	case MAVLINK_MSG_ID_MANUAL_SETPOINT:
+	{
+		mavlink_manual_setpoint_t cmd;
+		mavlink_msg_manual_setpoint_decode(&msg,&cmd);
+		attitude_cmd.phi = cmd.roll;
+		attitude_cmd.theta= cmd.pitch;
+		attitude_cmd.psi = cmd.yaw;
+		attitude_cmd.alt= cmd.thrust;
+		printf("[mavlink jevois] phi_cmd = %f\n",attitude_cmd.phi/3.14*180);
+//		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
+//		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
+//		printf("[mavlink jevois] alt_cmd = %f\n",attitude_cmd.alt);
 	}
 	break;
       }
@@ -171,7 +176,7 @@ static void mavlink_send_attitude(void)
 
 static void mavlink_send_set_mode(void)
 {
-	printf("currentMode is %d\n",autopilotMode.currentMode);
+//	printf("currentMode is %d\n",autopilotMode.currentMode);
 	mavlink_msg_set_mode_send(MAVLINK_COMM_0,
                             get_sys_time_msec(),
 			    autopilotMode.currentMode,
