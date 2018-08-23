@@ -48,15 +48,17 @@ void schedule_init(){
 
 void schedule_run() {
     autopilotMode.currentMode = autopilot_get_mode();
-    if (autopilot_get_mode() != AP_MODE_GUIDED) return;
-
     if(autopilotMode.currentMode != autopilotMode.previousMode)
     {
         clearClock(1);
         highLevelGuidanceState = FIRST_HIGH_LEVEL;
         controllerInUse = NO_CONTROLLER; 
+	flagNN = false;
     }
+    if (autopilot_get_mode() != AP_MODE_GUIDED) return;
 
+
+    printf("[scheduleloop] flagNN = %d\n",flagNN);
     readDroneState(&currentDroneState);
 
     switch(highLevelGuidanceState)

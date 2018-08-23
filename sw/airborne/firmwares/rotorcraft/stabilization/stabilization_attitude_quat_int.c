@@ -232,10 +232,8 @@ static void attitude_run_rate_control(int32_t fb_commands[], int32_t ff_commands
                             struct Int32Rates *rate_err, struct Int32Quat *sum_err)
 {
     printf("[stabilization] q only controller is running\n");
-    /*
     fb_commands[COMMAND_PITCH] = GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q);
     ff_commands[COMMAND_PITCH] = 0;
-    */
 }
 
 
