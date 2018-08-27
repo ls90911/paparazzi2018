@@ -45,6 +45,7 @@ mavlink_system_t mavlink_system;
 
 
 
+struct KALMAN_FILTER_STATE kalmanFilterState;
 
 
 static void mavlink_send_heartbeat(void);
@@ -53,6 +54,9 @@ static void mavlink_send_highres_imu(void);
 static void mavlink_send_set_mode(void);
 
 
+Butterworth2LowPass_int ax_filtered;
+Butterworth2LowPass_int ay_filtered;
+Butterworth2LowPass_int az_filtered;
 /*
  * Paparazzi Module functions
  */
@@ -62,6 +66,9 @@ void mavlink_jevois_init(void)
 {
   mavlink_system.sysid = MAVLINK_SYSID; // System ID, 1-255
   mavlink_system.compid = 0; // Component/Subsystem ID, 1-255
+  init_butterworth_2_low_pass_int(&ax_filtered, 20.0,1.0/512.0,imu.accel_unscaled.x);
+  init_butterworth_2_low_pass_int(&ay_filtered, 20.0,1.0/512.0,imu.accel_unscaled.y);
+  init_butterworth_2_low_pass_int(&az_filtered, 20.0,1.0/512.0,imu.accel_unscaled.z);
 }
 
 void mavlink_jevois_periodic(void)
@@ -72,6 +79,8 @@ void mavlink_jevois_periodic(void)
   RunOnceEvery(1, mavlink_send_set_mode());
 }
 
+uint32_t lastStepFilter;
+
 void mavlink_jevois_event(void)
 {
   mavlink_message_t msg;
@@ -81,7 +90,7 @@ void mavlink_jevois_event(void)
   while (MAVLinkChAvailable()) {
     uint8_t c = MAVLinkGetch();
     if (mavlink_parse_char(MAVLINK_COMM_1, c, &msg, &status)) {
-	  printf("msg.msgid is %d\n",msg.msgid);
+	  //printf("msg.msgid is %d\n",msg.msgid);
       switch (msg.msgid) {
         case MAVLINK_MSG_ID_HEARTBEAT: {
           mavlink_heartbeat_t heartbeat;
@@ -119,7 +128,7 @@ void mavlink_jevois_event(void)
 		mavlink_altitude_t alt;
 		mavlink_msg_altitude_decode(&msg,&alt);
 		float altitude = alt.altitude_terrain;
-		printf("[mavlink jevois] desired altitude is %f", altitude);
+		//printf("[mavlink jevois] desired altitude is %f", altitude);
 	}
 	break;
 
@@ -144,6 +153,21 @@ void mavlink_jevois_event(void)
 //		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
 //		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
 //		printf("[mavlink jevois] alt_cmd = %f\n",attitude_cmd.alt);
+	}
+	break;
+
+
+	case MAVLINK_MSG_ID_LOCAL_POSITION_NED:
+	{
+		mavlink_local_position_ned_t pos;
+		mavlink_msg_local_position_ned_decode(&msg,&pos);
+		printf("[mavlink jevois] kalman filter time  =  %d\n", (pos.time_boot_ms));
+		lastStepFilter = pos.time_boot_ms;
+		printf("[mavlink jevois] kalman filter x =  %f\n", pos.x);
+		printf("[mavlink jevois] kalman filter y =  %f\n", pos.y);
+		kalmanFilterState.x = pos.x;
+		kalmanFilterState.y = pos.y;
+		kalmanFilterState.z = pos.z;
 	}
 	break;
       }
@@ -201,9 +225,9 @@ static void mavlink_send_highres_imu(void)
 {
 	mavlink_msg_highres_imu_send(MAVLINK_COMM_0,
 			              get_sys_time_msec(),
-				      imu.accel.x/1024.0,
-				      imu.accel.y/1024.0,
-				      imu.accel.z/1024.0,
+				      get_butterworth_2_low_pass_int(&ax_filtered),
+				      get_butterworth_2_low_pass_int(&ay_filtered),
+				      get_butterworth_2_low_pass_int(&az_filtered),
 				      stateGetBodyRates_f()->p,
 				      stateGetBodyRates_f()->q,
 				      stateGetBodyRates_f()->r,
@@ -216,6 +240,12 @@ static void mavlink_send_highres_imu(void)
                                          0,
                                          0);
 	MAVLinkSendMessage();
+}
+void accelerator_filter_periodic()
+{
+	update_butterworth_2_low_pass_int(&ax_filtered, imu.accel.x);
+	update_butterworth_2_low_pass_int(&ay_filtered, imu.accel.y);
+	update_butterworth_2_low_pass_int(&az_filtered, imu.accel.z);
 }
 
 

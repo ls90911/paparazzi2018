@@ -62,6 +62,7 @@ void alt_filter_periodic(void)
 {
   // estimation at each step
   kalmanEstimation(&alt_filter, 0.);
+  printf("[alt_filter] altitude kalman is running\n");
 
   // update on new data
   float ga = (float)gps.hmsl / 1000.;

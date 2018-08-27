@@ -34,6 +34,7 @@
  */
 #include "mcu_periph/uart.h"
 #include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
+#include "filters/low_pass_filter.h"
 
 #ifndef JEVOIS_DEV
 #define JEVOIS_DEV uart2
@@ -68,7 +69,14 @@ static inline void comm_send_ch(mavlink_channel_t chan __attribute__((unused)), 
 
 
 
+struct KALMAN_FILTER_STATE
+{
+	float x;
+	float y;
+	float z;
+};
 
+extern struct KALMAN_FILTER_STATE kalmanFilterState;
 
 
 
@@ -81,8 +89,12 @@ static inline void comm_send_ch(mavlink_channel_t chan __attribute__((unused)), 
 extern void mavlink_jevois_init(void);
 extern void mavlink_jevois_periodic(void);
 extern void mavlink_jevois_event(void);
+extern void accelerator_filter_periodic(void);
 
 
+extern Butterworth2LowPass_int ax_filtered;
+extern Butterworth2LowPass_int ay_filtered;
+extern Butterworth2LowPass_int az_filtered;
 
 
 #endif

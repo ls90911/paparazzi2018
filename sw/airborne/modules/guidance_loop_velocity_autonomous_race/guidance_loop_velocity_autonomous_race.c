@@ -62,24 +62,17 @@ void guidance_h_module_read_rc(void)
 
 void guidance_h_module_run(bool in_flight)    // this function is called in higher level in guidance_h.c
 {
-//     printf("[guidance_loop_velocity] module mode is running\n");
      if(guidance_v_mode != GUIDANCE_V_MODE_GUIDED)
      guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
 
 
      guidance_v_set_guided_z(-1.5);
 
- //    printf("[guidance_loop_vel] z = %f \n",stateGetPositionNed_f()->z);
 
      
      attitude_cmd_i.phi = BFP_OF_REAL(attitude_cmd.phi, INT32_ANGLE_FRAC);
      attitude_cmd_i.theta= BFP_OF_REAL(attitude_cmd.theta, INT32_ANGLE_FRAC);
      attitude_cmd_i.psi = BFP_OF_REAL(attitude_cmd.psi, INT32_ANGLE_FRAC);
-     /*
-     attitude_cmd_i.phi = BFP_OF_REAL(0, INT32_ANGLE_FRAC);
-     attitude_cmd_i.theta= BFP_OF_REAL(0, INT32_ANGLE_FRAC);
-     attitude_cmd_i.psi = BFP_OF_REAL(0, INT32_ANGLE_FRAC);
-*/
      int32_quat_of_eulers(&stab_att_sp_quat,&attitude_cmd_i);
      stabilization_attitude_run(in_flight);
 }

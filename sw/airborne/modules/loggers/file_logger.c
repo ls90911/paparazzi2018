@@ -32,7 +32,7 @@
 #include "subsystems/imu.h"
 #include "firmwares/rotorcraft/stabilization.h"
 #include "state.h"
-#include "modules/guidance_loop_controller/guidance_loop_controller.h"
+#include "modules/sensors/mavlink_jevois.h"
 
 /** Set the default File logger path to the USB drive */
 #ifndef FILE_LOGGER_PATH
@@ -85,7 +85,7 @@ void file_logger_periodic(void)
   static uint32_t counter;
   struct Int32Quat *quat = stateGetNedToBodyQuat_i();
 
-  fprintf(file_logger, "%d,%f,%f,%f, %f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d \n",
+  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d \n",
           counter,
           stateGetPositionNed_f()->x,
           stateGetPositionNed_f()->y,
@@ -100,15 +100,18 @@ void file_logger_periodic(void)
           stateGetBodyRates_f()->q,
           stateGetBodyRates_f()->r,
 
-          nn_cmd.thrust_ref,
-          nn_cmd.rate_ref,
+	  kalmanFilterState.x,
+	  kalmanFilterState.y,
+	  kalmanFilterState.z,
+          
+	  imu.accel.x,
+	  imu.accel.y,
+	  imu.accel.z,
+	  
+	  get_butterworth_2_low_pass_int(&ax_filtered),
+	  get_butterworth_2_low_pass_int(&ay_filtered),
+	  get_butterworth_2_low_pass_int(&az_filtered)
 
-          stabilization_cmd[COMMAND_THRUST],
-          stabilization_cmd[COMMAND_ROLL],
-          stabilization_cmd[COMMAND_PITCH],
-          stabilization_cmd[COMMAND_YAW],
-
-          controllerInUse
          );
   counter++;
 }

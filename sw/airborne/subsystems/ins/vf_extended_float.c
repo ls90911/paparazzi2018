@@ -161,6 +161,7 @@ void vff_propagate(float accel, float dt)
 #if DEBUG_VFF_EXTENDED
   RunOnceEvery(10, send_vffe(&(DefaultChannel).trans_tx, &(DefaultDevice).device));
 #endif
+
 }
 
 /**

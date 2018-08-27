@@ -9,6 +9,7 @@
   </header>
   <init fun="mavlink_jevois_init()"/>
   <periodic fun="mavlink_jevois_periodic()" freq="60"/>
+  <periodic fun="accelerator_filter_periodic()" freq="512"/>
   <event fun="mavlink_jevois_event()"/>
   <makefile>
     <file name="mavlink_jevois.c"/>
