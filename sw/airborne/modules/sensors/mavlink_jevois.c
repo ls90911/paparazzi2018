@@ -225,9 +225,9 @@ static void mavlink_send_highres_imu(void)
 {
 	mavlink_msg_highres_imu_send(MAVLINK_COMM_0,
 			              get_sys_time_msec(),
-				      get_butterworth_2_low_pass_int(&ax_filtered),
-				      get_butterworth_2_low_pass_int(&ay_filtered),
-				      get_butterworth_2_low_pass_int(&az_filtered),
+				      get_butterworth_2_low_pass_int(&ax_filtered)/1024.0,
+				      get_butterworth_2_low_pass_int(&ay_filtered)/1024.0,
+				      get_butterworth_2_low_pass_int(&az_filtered)/1024.0,
 				      stateGetBodyRates_f()->p,
 				      stateGetBodyRates_f()->q,
 				      stateGetBodyRates_f()->r,

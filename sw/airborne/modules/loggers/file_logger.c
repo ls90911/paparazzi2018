@@ -85,7 +85,7 @@ void file_logger_periodic(void)
   static uint32_t counter;
   struct Int32Quat *quat = stateGetNedToBodyQuat_i();
 
-  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d \n",
+  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f \n",
           counter,
           stateGetPositionNed_f()->x,
           stateGetPositionNed_f()->y,
@@ -110,7 +110,14 @@ void file_logger_periodic(void)
 	  
 	  get_butterworth_2_low_pass_int(&ax_filtered),
 	  get_butterworth_2_low_pass_int(&ay_filtered),
-	  get_butterworth_2_low_pass_int(&az_filtered)
+	  get_butterworth_2_low_pass_int(&az_filtered),
+
+	  attitude_cmd.phi,
+	  attitude_cmd.theta,
+	  attitude_cmd.psi,
+	  attitude_cmd.alt
+
+
 
          );
   counter++;
