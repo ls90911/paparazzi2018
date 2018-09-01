@@ -74,6 +74,9 @@ struct KALMAN_FILTER_STATE
 	float x;
 	float y;
 	float z;
+	float bx;
+	float by;
+	float bz;
 };
 
 extern struct KALMAN_FILTER_STATE kalmanFilterState;

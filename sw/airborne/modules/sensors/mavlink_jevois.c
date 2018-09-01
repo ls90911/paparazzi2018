@@ -161,13 +161,13 @@ void mavlink_jevois_event(void)
 	{
 		mavlink_local_position_ned_t pos;
 		mavlink_msg_local_position_ned_decode(&msg,&pos);
-		printf("[mavlink jevois] kalman filter time  =  %d\n", (pos.time_boot_ms));
 		lastStepFilter = pos.time_boot_ms;
-		printf("[mavlink jevois] kalman filter x =  %f\n", pos.x);
-		printf("[mavlink jevois] kalman filter y =  %f\n", pos.y);
 		kalmanFilterState.x = pos.x;
 		kalmanFilterState.y = pos.y;
 		kalmanFilterState.z = pos.z;
+		kalmanFilterState.bx = pos.vx;
+		kalmanFilterState.by = pos.vy;
+		kalmanFilterState.bz = pos.vz;
 	}
 	break;
       }

@@ -33,6 +33,8 @@
 #include "firmwares/rotorcraft/stabilization.h"
 #include "state.h"
 #include "modules/sensors/mavlink_jevois.h"
+#include "autopilot.h"
+#include "modules/sonar/sonar_bebop.h"
 
 /** Set the default File logger path to the USB drive */
 #ifndef FILE_LOGGER_PATH
@@ -85,7 +87,7 @@ void file_logger_periodic(void)
   static uint32_t counter;
   struct Int32Quat *quat = stateGetNedToBodyQuat_i();
 
-  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f \n",
+  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%d,%f,%f,%f,%f \n",
           counter,
           stateGetPositionNed_f()->x,
           stateGetPositionNed_f()->y,
@@ -115,8 +117,15 @@ void file_logger_periodic(void)
 	  attitude_cmd.phi,
 	  attitude_cmd.theta,
 	  attitude_cmd.psi,
-	  attitude_cmd.alt
+	  attitude_cmd.alt,
+		  
+	  autopilot_get_mode(),
 
+	 kalmanFilterState.bx, 
+	 kalmanFilterState.by, 
+	 kalmanFilterState.bz,
+
+	 sonar_bebop.distance
 
 
          );
