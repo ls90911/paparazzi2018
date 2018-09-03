@@ -65,9 +65,10 @@ bool hover_with_optitrack(float hoverTime)
     guidance_v_set_guided_z(hoverPos.z);
     */
 
-    guidance_loop_set_vx(0.0);
-    guidance_loop_set_vy(0.0);
-    guidance_v_set_guided_z(-1.5);
+	    guidance_loop_set_x(0.0);
+	    guidance_loop_set_y(0.0);
+	    guidance_h_set_guided_heading(0);
+	    guidance_v_set_guided_z(-1.5);
 
 
     if(getTime(2)>hoverTime)

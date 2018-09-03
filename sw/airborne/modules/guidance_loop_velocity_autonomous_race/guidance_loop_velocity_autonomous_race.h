@@ -31,12 +31,22 @@
 enum CONTROL_MODE {VELOCITY_MODE,ATTITUDE_MODE};
 
 struct guidance_module_st {
+    float x_pgain;
+    float y_pgain;
+    float x_dgain;
+    float y_dgain;
+    float x_igain;
+    float y_igain;
+
     float phi_pgain;        ///< The roll P gain on the err_vx
     float phi_igain;        ///< The roll I gain on the err_vx_int
     float phi_dgain;
     float theta_pgain;      ///< The pitch P gain on the err_vy
     float theta_igain;      ///< The pitch I gain on the err_vy_int
     float theta_dgain;
+
+    float desired_x;
+    float desired_y;
     float desired_vx;         ///< The desired velocity in the x direction (cm/s)
     float desired_vy;         ///< The desired velocity in the y direction (cm/s)
     float desired_z;
@@ -72,6 +82,9 @@ extern void guidance_loop_set_phi(float desired_phi);
 extern void guidance_loop_set_vx(float vx);
 extern void guidance_loop_set_vy(float vy);
 extern void setControlMode(enum CONTROL_MODE ctl_mode);
+
+extern void guidance_loop_set_x(float x);
+extern void guidance_loop_set_y(float y);
 #endif
 
 

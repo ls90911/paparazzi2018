@@ -35,6 +35,15 @@
 
 #define CMD_OF_SAT  1500 // 40 deg = 2859.1851
 
+
+#ifndef X_PGAIN
+#define X_PGAIN 0.8
+#endif
+
+#ifndef Y_PGAIN
+#define Y_PGAIN 0.80
+#endif
+
 #ifndef PHI_PGAIN
 #define PHI_PGAIN 0.20
 #endif
@@ -78,6 +87,11 @@ PRINT_CONFIG_VAR(VISION_DESIRED_VX)
 PRINT_CONFIG_VAR(VISION_DESIRED_VY)
 struct FloatEulers guidance_rp_command;
 struct guidance_module_st guidance_module = {
+
+	.x_pgain = X_PGAIN,
+	.y_pgain = Y_PGAIN,
+//	.x_dgain = X_DGAIN,
+//	.y_dgain = Y_DGAIN,
 
 .phi_pgain = PHI_PGAIN,
 .phi_igain = PHI_IGAIN,
@@ -146,6 +160,11 @@ void guidance_loop_pid()
     }
     //current_guidance_h_mode = guidance_h.mode;
     //
+    
+    float current_x = stateGetPositionNed_f()->x;
+    float current_y = stateGetPositionNed_f()->y;
+    guidance_module.desired_vx = guidance_module.x_pgain * (guidance_module.desired_x-current_x);
+    guidance_module.desired_vy = guidance_module.y_pgain * (guidance_module.desired_y-current_y);
     float current_vel_x = stateGetSpeedNed_f()->x;
     float current_vel_y = stateGetSpeedNed_f()->y;
     /* Calculate the error */
@@ -223,4 +242,14 @@ void guidance_loop_set_vy(float vy)
 void setControlMode(enum CONTROL_MODE ctl_mode)
 {
 	guidance_module.control_mode = ctl_mode;
+}
+
+void guidance_loop_set_x(float x)
+{
+	guidance_module.desired_x = x;
+}
+
+void guidance_loop_set_y(float y)
+{
+	guidance_module.desired_y = y;
 }
