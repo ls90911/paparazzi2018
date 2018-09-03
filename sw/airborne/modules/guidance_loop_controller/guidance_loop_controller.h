@@ -67,5 +67,11 @@ extern bool flagNN;
 extern enum ControllerInUse controllerInUse;
 extern struct NN_CMD nn_cmd;
 
+extern struct FloatVect3 pos_OT;
+extern struct FloatVect3 vel_OT;
+extern struct FloatVect3 pos_NED;
+extern struct FloatVect3 vel_NED;
+extern struct FloatVect3 pos_NWU;
+extern struct FloatVect3 vel_NWU;
 #endif
 

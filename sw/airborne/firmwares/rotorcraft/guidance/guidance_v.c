@@ -604,11 +604,11 @@ bool guidance_v_set_guided_th(float th)
 
 int32_t nn_thrust_control(double lift,int32_t inv_m,int32_t guidance_v_thrust_coeff)
 {
+    printf("[guidance_v] nn_thrust_control is running\n");
   float m = 0.38905;
   int32_t g_m_zdd = (int32_t)BFP_OF_REAL(lift/m,FF_CMD_FRAC);
   int32_t guidance_v_ff_cmd = g_m_zdd / inv_m;
   return guidance_v_ff_cmd = (guidance_v_ff_cmd << INT32_TRIG_FRAC) / guidance_v_thrust_coeff;
-    printf("[guidance_v] nn_thrust_control is running\n");
 }
 
 
