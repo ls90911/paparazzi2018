@@ -24,6 +24,7 @@
  */
 
 #include "modules/guidance_loop_controller/guidance_loop_controller.h"
+#include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
 #include "modules/nn/nn.h"
 #include "stdio.h"
 #include "state.h"
@@ -34,6 +35,13 @@ struct Pos hoverPos;
 struct Euler hoverEuler;
 bool flagNN;
 struct NN_CMD nn_cmd;
+struct NN_STATE nn_state;
+
+struct FloatRMat R_OPTITRACC_2_NED, R_NED_2_NWU;
+struct FloatEulers eulersOT2NED = {0.0,0.0,-33.0/180.0*3.14};
+struct FloatEulers eulersNED2BWU = {3.14,0.0,0.0};
+struct FloatVect3 pos_OT,vel_OT,pos_NED,vel_NED,pos_NWU,vel_NWU;
+
 
 bool hover_with_optitrack(float hoverTime)
 {
@@ -41,20 +49,25 @@ bool hover_with_optitrack(float hoverTime)
     {
             controllerInUse= CONTROLLER_HOVER_WITH_OPTITRACK;
             clearClock(2);
-            guidance_h_mode_changed(GUIDANCE_H_MODE_GUIDED);
+            guidance_h_mode_changed(GUIDANCE_H_MODE_MODULE);
             guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
             hoverPos.x = stateGetPositionNed_f()->x;
             hoverPos.y= stateGetPositionNed_f()->y;
             hoverPos.z = stateGetPositionNed_f()->z;
             hoverEuler.psi= 0;
-            printf("aa hover is initialized\n");
+            printf("hover is initialized\n");
             printf("time 2 is %f\n",getTime(2));
             flagNN = false;
     }
+    /*
     guidance_h_set_guided_pos(hoverPos.x, hoverPos.y);   
     guidance_h_set_guided_heading(hoverEuler.psi);
     guidance_v_set_guided_z(hoverPos.z);
+    */
 
+    guidance_loop_set_vx(0.0);
+    guidance_loop_set_vy(0.0);
+    guidance_v_set_guided_z(-1.5);
 
 
     if(getTime(2)>hoverTime)
@@ -79,26 +92,31 @@ void nn_controller(void)
             guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
             flagNN = true;
             printf("[nn controle] nn controller is activated]");
+
+	    float_rmat_of_eulers_321(&R_OPTITRACC_2_NED,&eulersOT2NED);
+	    float_rmat_of_eulers_321(&R_NED_2_NWU,&eulersNED2BWU);
+
+	    pos_OT.x = hoverPos.x;
+	    pos_OT.y = hoverPos.y;
+	    pos_OT.z = hoverPos.z;
+
 	    guidance_h_set_guided_pos(hoverPos.x, hoverPos.y);   
 	    guidance_h_set_guided_heading(hoverEuler.psi);
 	    guidance_v_set_guided_z(hoverPos.z);
     }
 
-    /*double state[NUM_STATE_VARS] = {
-        -4.2232016635363578e-02, -3.0225037024451664e+00, -6.1490007593689278e-01,
-        5.1089365659897990e-01, 2.9941452020833115e-01
-    };*/
+    
 
     double state[NUM_STATE_VARS] = {stateGetPositionNed_f()->x,
     stateGetSpeedNed_f()->x,
-    stateGetPositionNed_f()->z,
-    stateGetSpeedNed_f()->z,
-    stateGetNedToBodyEulers_f()->theta
+    -stateGetPositionNed_f()->z,
+    -stateGetSpeedNed_f()->z,
+    -stateGetNedToBodyEulers_f()->theta
     };
     double control[NUM_CONTROL_VARS];
     nn(state, control);
     nn_cmd.thrust_ref = control[0] ;
-    nn_cmd.rate_ref = control[1] ;
+    nn_cmd.rate_ref = -control[1] ;
 }
 
 bool go_to_point(float desired_x,float desired_y,float desired_z,float desired_heading)

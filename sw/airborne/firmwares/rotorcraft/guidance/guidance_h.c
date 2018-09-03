@@ -53,6 +53,7 @@
 #define GUIDANCE_H_VGAIN 0
 #endif
 
+#define GUIDANCE_H_MODE_MODULE_SETTING GUIDANCE_H_MODE_MODULE
 /* error if some gains are negative */
 #if (GUIDANCE_H_PGAIN < 0) ||                   \
   (GUIDANCE_H_DGAIN < 0)   ||                   \

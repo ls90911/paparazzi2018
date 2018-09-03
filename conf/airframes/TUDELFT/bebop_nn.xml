@@ -39,6 +39,7 @@
     <module name="geo_mag"/>
     <module name="air_data"/>
     <module name="send_imu_mag_current"/>
+    <module name="guidance_loop_velocity_autonomous_race"/>
     <module name="logger_file">
       <define name="FILE_LOGGER_PATH" value="/data/ftp/internal_000"/>
     </module>
@@ -229,7 +230,7 @@
     <define name="MODE_STARTUP" value="AP_MODE_NAV"/>
     <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
     <define name="MODE_AUTO1" value="AP_MODE_ATTITUDE_Z_HOLD"/>
-    <define name="MODE_AUTO2" value="AP_MODE_GUIDED"/>
+    <define name="MODE_AUTO2" value="AP_MODE_MODULE"/>
 
     <define name="NO_RC_THRUST_LIMIT" value="TRUE"/>
   </section>

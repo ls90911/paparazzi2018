@@ -43,6 +43,22 @@ struct NN_CMD {
     double rate_ref;
 };
 
+struct NN_STATE
+{
+	double x;
+	double y;
+	double z;
+	double vx;
+	double vy;
+	double vz;
+	double theta;
+	double phi;
+	double psi;
+	double p;
+	double q;
+	double r;
+};
+
 extern bool hover_with_optitrack(float hoverTime);
 extern void nn_controller(void);
 extern bool go_to_point(float desired_x,float desired_y,float desired_z,float desired_heading);
