@@ -322,6 +322,8 @@ static void baro_cb(uint8_t __attribute__((unused)) sender_id, float pressure)
     ins_int.baro_initialized = true;
   }
 
+  /*
+
   if (ins_int.baro_initialized) {
     if (ins_int.vf_reset) {
       ins_int.vf_reset = false;
@@ -350,9 +352,9 @@ static void baro_cb(uint8_t __attribute__((unused)) sender_id, float pressure)
     }
     ins_ned_to_state();
 
-    /* reset the counter to indicate we just had a measurement update */
     ins_int.propagation_cnt = 0;
   }
+  */
 }
 
 #if USE_GPS

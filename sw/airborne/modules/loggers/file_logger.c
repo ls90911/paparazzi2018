@@ -35,6 +35,7 @@
 #include "modules/sensors/mavlink_jevois.h"
 #include "autopilot.h"
 #include "modules/sonar/sonar_bebop.h"
+#include "subsystems/ins/ins_int.h"
 
 /** Set the default File logger path to the USB drive */
 #ifndef FILE_LOGGER_PATH
@@ -87,7 +88,7 @@ void file_logger_periodic(void)
   static uint32_t counter;
   struct Int32Quat *quat = stateGetNedToBodyQuat_i();
 
-  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%d,%f,%f,%f,%f \n",
+  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%d,%f,%f,%f,%f,%f \n",
           counter,
           stateGetPositionNed_f()->x,
           stateGetPositionNed_f()->y,
@@ -125,7 +126,9 @@ void file_logger_periodic(void)
 	 kalmanFilterState.by, 
 	 kalmanFilterState.bz,
 
-	 sonar_bebop.distance
+	 sonar_bebop.distance,
+
+	 ins_int.baro_z
 
 
          );
