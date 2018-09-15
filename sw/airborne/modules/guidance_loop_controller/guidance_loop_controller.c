@@ -38,7 +38,7 @@ struct NN_CMD nn_cmd;
 struct NN_STATE nn_state;
 
 struct FloatRMat R_OPTITRACK_2_NED, R_NED_2_NWU;
-struct FloatEulers eulersOT2NED = {0.0,0.0,-33.0/180.0*3.14};
+struct FloatEulers eulersOT2NED = {0.0,0.0,-0.0/180.0*3.14};
 struct FloatEulers eulersNED2BWU = {3.14,0.0,0.0};
 struct FloatVect3 pos_OT,vel_OT,pos_NED,vel_NED,pos_NWU,vel_NWU;
 
@@ -62,6 +62,8 @@ bool hover_with_optitrack(float hoverTime)
 
     // -------------for log -----------------------
 
+    float_rmat_of_eulers_321(&R_OPTITRACK_2_NED,&eulersOT2NED);
+    float_rmat_of_eulers_321(&R_NED_2_NWU,&eulersNED2BWU);
     pos_OT.x = stateGetPositionNed_f()->x;
     pos_OT.y = stateGetPositionNed_f()->y;
     pos_OT.z = stateGetPositionNed_f()->z;
@@ -124,7 +126,7 @@ void nn_controller(void)
     guidance_loop_set_y(hoverPos.y);
     guidance_loop_set_x(hoverPos.x);
     guidance_h_set_guided_heading(0);
-    guidance_v_set_guided_z(-3);
+    guidance_v_set_guided_z(-1.5);
     printf("[nn controller] nn controller is run\n");
 
     // transform coordinate from Optitrack frame to NED frame of cyberzoo and then to North-west-up frame
@@ -143,7 +145,7 @@ void nn_controller(void)
     float_rmat_transp_vmult(&vel_NWU, &R_NED_2_NWU, &vel_NED);
 
    // prepare current states to feed NN
-    double state[NUM_STATE_VARS] = {pos_NWU.x, vel_NWU.x, pos_NWU.z, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
+    double state[NUM_STATE_VARS] = {pos_NWU.x-5, vel_NWU.x, pos_NWU.z-1.5, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
     double control[NUM_CONTROL_VARS];
     nn(state, control);
     nn_cmd.thrust_ref = control[0] ;
