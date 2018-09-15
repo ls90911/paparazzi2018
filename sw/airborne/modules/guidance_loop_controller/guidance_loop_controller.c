@@ -141,10 +141,9 @@ void nn_controller(void)
 
     float_rmat_transp_vmult(&pos_NWU, &R_NED_2_NWU, &pos_NED);
     float_rmat_transp_vmult(&vel_NWU, &R_NED_2_NWU, &vel_NED);
-    printf("[controller] temp!!!\n");
 
    // prepare current states to feed NN
-    double state[NUM_STATE_VARS] = {pos_NWU.x-2, vel_NWU.x, pos_NWU.z, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
+    double state[NUM_STATE_VARS] = {pos_NWU.x, vel_NWU.x, pos_NWU.z, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
     double control[NUM_CONTROL_VARS];
     nn(state, control);
     nn_cmd.thrust_ref = control[0] ;

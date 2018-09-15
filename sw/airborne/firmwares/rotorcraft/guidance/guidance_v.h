@@ -154,4 +154,5 @@ extern int32_t inv_m_extern;
     guidance_v_z_sum_err = 0;     \
   }
 
+extern int32_t guidance_v_delta_t;
 #endif /* GUIDANCE_V_H */
