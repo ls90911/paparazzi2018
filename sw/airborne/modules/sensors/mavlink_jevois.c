@@ -118,6 +118,7 @@ void mavlink_jevois_event(void)
 		attitude_cmd.psi = att.yaw;
 
 		printf("[mavlink jevois] phi_cmd = %f\n",attitude_cmd.phi/3.14*180);
+		printf("[mavlink jevois] psi = %f\n",stateGetNedToBodyEulers_f()->psi/3.14*180);
 		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
 		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
 	}
@@ -137,7 +138,6 @@ void mavlink_jevois_event(void)
 		mavlink_debug_t debug;
 		mavlink_msg_attitude_decode(&msg,&debug);
 		printf("[mavlink jevois] debug value is %f", debug.value);
-		printf("[mavlink jevois] debug ind is %d", debug.ind);
 	}
 	break;
 
@@ -155,7 +155,6 @@ void mavlink_jevois_event(void)
 //		printf("[mavlink jevois] alt_cmd = %f\n",attitude_cmd.alt);
 	}
 	break;
-
 
 	case MAVLINK_MSG_ID_LOCAL_POSITION_NED:
 	{
@@ -234,11 +233,11 @@ static void mavlink_send_highres_imu(void)
 				      stateGetNedToBodyEulers_f()->phi,
 				      stateGetNedToBodyEulers_f()->theta,
 				      stateGetNedToBodyEulers_f()->psi,
-                                         0,
-                                         0,
-                                         0,
-                                         0,
-                                         0);
+				      stateGetPositionNed_f()->x,
+				      stateGetPositionNed_f()->y,
+				      stateGetSpeedNed_f()->x,
+				      stateGetSpeedNed_f()->y,
+					 0);
 	MAVLinkSendMessage();
 }
 void accelerator_filter_periodic()

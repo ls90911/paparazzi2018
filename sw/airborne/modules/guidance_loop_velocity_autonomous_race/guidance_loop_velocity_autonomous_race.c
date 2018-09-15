@@ -71,7 +71,7 @@ void guidance_h_module_run(bool in_flight)    // this function is called in high
      
      attitude_cmd_i.phi = BFP_OF_REAL(attitude_cmd.phi, INT32_ANGLE_FRAC);
      attitude_cmd_i.theta= BFP_OF_REAL(attitude_cmd.theta, INT32_ANGLE_FRAC);
-     attitude_cmd_i.theta= BFP_OF_REAL(-10.0/180*3.14, INT32_ANGLE_FRAC);
+     //attitude_cmd_i.theta= BFP_OF_REAL(-10.0/180*3.14, INT32_ANGLE_FRAC);
      attitude_cmd_i.psi = BFP_OF_REAL(attitude_cmd.psi, INT32_ANGLE_FRAC);
      int32_quat_of_eulers(&stab_att_sp_quat,&attitude_cmd_i);
      stabilization_attitude_run(in_flight);

@@ -1,5 +1,4 @@
-/*
- * Copyright (C) 2014 Freek van Tienen <freek.v.tienen@gmail.com>
+/* * Copyright (C) 2014 Freek van Tienen <freek.v.tienen@gmail.com>
  *
  * This file is part of paparazzi.
  *
@@ -88,7 +87,7 @@ void file_logger_periodic(void)
   static uint32_t counter;
   struct Int32Quat *quat = stateGetNedToBodyQuat_i();
 
-  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%d,%f,%f,%f,%f,%f \n",
+  fprintf(file_logger, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%d,%f,%f,%f,%f \n",
           counter,
           stateGetPositionNed_f()->x,
           stateGetPositionNed_f()->y,
@@ -126,9 +125,7 @@ void file_logger_periodic(void)
 	 kalmanFilterState.by, 
 	 kalmanFilterState.bz,
 
-	 sonar_bebop.distance,
-
-	 ins_int.baro_z
+	 sonar_bebop.distance
 
 
          );
