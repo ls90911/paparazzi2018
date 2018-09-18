@@ -28,6 +28,7 @@
 #include "modules/nn/nn.h"
 #include "stdio.h"
 #include "state.h"
+#include<sys/time.h>
 
 
 enum ControllerInUse controllerInUse;
@@ -41,6 +42,10 @@ struct FloatRMat R_OPTITRACK_2_NED, R_NED_2_NWU;
 struct FloatEulers eulersOT2NED = {0.0,0.0,-0.0/180.0*3.14};
 struct FloatEulers eulersNED2BWU = {3.14,0.0,0.0};
 struct FloatVect3 pos_OT,vel_OT,pos_NED,vel_NED,pos_NWU,vel_NWU;
+float nn_time;
+float psi_c;
+struct timeval t0;
+struct timeval t1;
 
 
 bool hover_with_optitrack(float hoverTime)
@@ -81,10 +86,11 @@ bool hover_with_optitrack(float hoverTime)
   
    guidance_loop_set_x(0.0);
    guidance_loop_set_y(0.0);
-   guidance_h_set_guided_heading(0);
+   psi_c = 30.0/180.0*3.14*sin(3.14/6*getTime(2));
+   guidance_h_set_guided_heading(psi_c);
+   guidance_loop_set_heading(0.0);
    guidance_v_set_guided_z(-1.5);
 
-            printf("time 2 is %f\n",getTime(2));
 
     if(getTime(2)>hoverTime)
     {
@@ -97,6 +103,10 @@ bool hover_with_optitrack(float hoverTime)
 
 }
 
+float timedifference_msec(struct timeval t0, struct timeval t1)
+{
+	return (t1.tv_sec - t0.tv_sec) * 1000.0f + (t1.tv_usec - t0.tv_usec) / 1000.0f;
+}
 
 void nn_controller(void)
 {
@@ -125,7 +135,7 @@ void nn_controller(void)
     // First use pid to hover, then hack p and thrust using NN. 
     guidance_loop_set_y(hoverPos.y);
     guidance_loop_set_x(hoverPos.x);
-    guidance_h_set_guided_heading(0);
+    guidance_loop_set_heading(0.0);
     guidance_v_set_guided_z(-1.5);
     printf("[nn controller] nn controller is run\n");
 
@@ -145,9 +155,13 @@ void nn_controller(void)
     float_rmat_transp_vmult(&vel_NWU, &R_NED_2_NWU, &vel_NED);
 
    // prepare current states to feed NN
-    double state[NUM_STATE_VARS] = {pos_NWU.x-5, vel_NWU.x, pos_NWU.z-1.5, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
+    double state[NUM_STATE_VARS] = {pos_NWU.x, vel_NWU.x, pos_NWU.z-1.5, vel_NWU.z, -stateGetNedToBodyEulers_f()->theta};
     double control[NUM_CONTROL_VARS];
+    gettimeofday(&t0, 0);
     nn(state, control);
+    gettimeofday(&t1, 0);
+    nn_time = timedifference_msec(t0,t1);
+
     nn_cmd.thrust_ref = control[0] ;
     nn_cmd.rate_ref = -control[1] ;
 }

@@ -700,10 +700,12 @@ bool guidance_h_set_guided_pos(float x, float y)
 
 bool guidance_h_set_guided_heading(float heading)
 {
+	
   if (guidance_h.mode == GUIDANCE_H_MODE_GUIDED) {
     ClearBit(guidance_h.sp.mask, 7);
     guidance_h.sp.heading = heading;
     FLOAT_ANGLE_NORMALIZE(guidance_h.sp.heading);
+    printf("[guidance_h.c] heading sp = %f\n",guidance_h.sp.heading);
     return true;
   }
   return false;

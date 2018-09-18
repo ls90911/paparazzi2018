@@ -73,5 +73,8 @@ extern struct FloatVect3 pos_NED;
 extern struct FloatVect3 vel_NED;
 extern struct FloatVect3 pos_NWU;
 extern struct FloatVect3 vel_NWU;
+extern float nn_time;
+
+extern float psi_c;
 #endif
 
