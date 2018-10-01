@@ -28,6 +28,8 @@
 #include "firmwares/rotorcraft/guidance/guidance_v_ref.h"
 #include "generated/airframe.h"
 
+#include "modules/guidance_loop_velocity_autonomous_race/guidance_loop_velocity_autonomous_race.h"
+
 /** reference model vertical accel in meters/s^2 (output)
  *  fixed point representation with #GV_ZDD_REF_FRAC
  *  Q23.8 : accuracy 0.0039 , range 8388km/s^2
@@ -75,6 +77,7 @@ int64_t gv_z_ref;
 #define GUIDANCE_V_REF_ZETA  0.85
 #endif
 #define GV_ZETA_OMEGA_FRAC 10
+
 #define GV_ZETA_OMEGA BFP_OF_REAL((GUIDANCE_V_REF_ZETA*GUIDANCE_V_REF_OMEGA), GV_ZETA_OMEGA_FRAC)
 #define GV_OMEGA_2_FRAC 7
 #define GV_OMEGA_2    BFP_OF_REAL((GUIDANCE_V_REF_OMEGA*GUIDANCE_V_REF_OMEGA), GV_OMEGA_2_FRAC)
@@ -123,6 +126,12 @@ void gv_update_ref_from_z_sp(int32_t z_sp)
       gv_zdd_ref = 0;
     }
   }
+
+  /*
+  gv_z_ref = BFP_OF_REAL(attitude_cmd.alt,GV_Z_REF_FRAC);
+  gv_zd_ref = BFP_OF_REAL(0,GV_Z_REF_FRAC);
+  gv_zdd_ref = BFP_OF_REAL(0,GV_Z_REF_FRAC);
+  */
 }
 
 

@@ -66,7 +66,8 @@ void guidance_h_module_run(bool in_flight)    // this function is called in high
      guidance_v_mode_changed(GUIDANCE_V_MODE_GUIDED);
 
 
-     guidance_v_set_guided_z(-1.5);
+     //guidance_v_set_guided_z(-1.3);
+     guidance_v_set_guided_z(attitude_cmd.alt);
 
      
      attitude_cmd_i.phi = BFP_OF_REAL(attitude_cmd.phi, INT32_ANGLE_FRAC);

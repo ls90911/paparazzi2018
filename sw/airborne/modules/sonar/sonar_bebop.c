@@ -190,6 +190,7 @@ void *sonar_bebop_read(void *data __attribute__((unused)))
 
     distance_before_filter = sonar_bebop.distance;
     distance_after_filter = sonar_filter_gate(distance_before_filter);
+    sonar_bebop.distance = distance_after_filter;
 
     // set sonar pulse mode for next pulse based on altitude
     if (mode == 0 && sonar_bebop.distance > SONAR_BEBOP_TRANSITION_LOW_TO_HIGH) {

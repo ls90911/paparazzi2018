@@ -150,9 +150,9 @@ void mavlink_jevois_event(void)
 		attitude_cmd.psi = cmd.yaw;
 		attitude_cmd.alt= cmd.thrust;
 		printf("[mavlink jevois] phi_cmd = %f\n",attitude_cmd.phi/3.14*180);
-//		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
-//		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
-//		printf("[mavlink jevois] alt_cmd = %f\n",attitude_cmd.alt);
+		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
+		printf("[mavlink jevois] psi_cmd = %f\n",attitude_cmd.psi/3.14*180);
+		printf("[mavlink jevois] alt_cmd = %f\n",attitude_cmd.alt);
 	}
 	break;
 
@@ -222,6 +222,7 @@ static void mavlink_send_heartbeat(void)
 
 static void mavlink_send_highres_imu(void)
 {
+	printf("bebop is sending highres_imu\n");
 	mavlink_msg_highres_imu_send(MAVLINK_COMM_0,
 			              get_sys_time_msec(),
 				      get_butterworth_2_low_pass_int(&ax_filtered)/1024.0,
