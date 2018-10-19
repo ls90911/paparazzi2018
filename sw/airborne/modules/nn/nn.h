@@ -2,6 +2,7 @@
 #define _NN_H
 #include "nn_params.h"
 
-void compute_control(double **ptr_arr_1, double **ptr_arr_2);
-extern void nn(double state[NUM_STATE_VARS], double control[NUM_CONTROL_VARS]);
+void compute_control(float **ptr_arr_1, float **ptr_arr_2);
+extern void nn(float state[NUM_STATE_VARS], float control[NUM_CONTROL_VARS]);
+
 #endif
