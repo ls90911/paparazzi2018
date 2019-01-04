@@ -145,6 +145,7 @@ void mavlink_jevois_event(void)
 		attitude_cmd.psi = cmd.yaw;
 		attitude_cmd.alt= cmd.thrust;
 		printf("[mavlink jevois] theta_cmd = %f\n",attitude_cmd.theta/3.14*180);
+		printf("[mavlink jevois] phi_cmd = %f\n",attitude_cmd.phi/3.14*180);
 	}
 	break;
 
